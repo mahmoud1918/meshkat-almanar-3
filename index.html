@@ -1,0 +1,940 @@
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ثانوية مشكاة المنار | الأمن السيبراني | ثالث ثانوي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { tajawal: ['Tajawal', 'sans-serif'] },
+      colors: {
+        primary: '#0f172a',
+        accent: '#06b6d4',
+        accent2: '#22d3ee',
+        lime: '#a3e635',
+        gold: '#facc15'
+      }
+    }
+  }
+}
+</script>
+<style>
+*{font-family: 'Tajawal', sans-serif; scroll-behavior: smooth;}
+body{background:#020617;}
+.glass{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12)}
+.card-flip{perspective:1000px}
+.card-inner{transition:transform 0.6s;transform-style:preserve-3d}
+.card-flip.flipped .card-inner{transform:rotateY(180deg)}
+.card-front, .card-back{backface-visibility:hidden}
+.card-back{transform:rotateY(180deg)}
+.scrollbar-hide::-webkit-scrollbar{display:none}
+.progress-ring__circle{transition:stroke-dashoffset 0.5s ease}
+.neon-shadow{box-shadow:0 0 20px rgba(6,182,214,0.4), 0 0 40px rgba(6,182,214,0.15)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.float-anim{animation:float 4s ease-in-out infinite}
+</style>
+</head>
+<body class="bg-[#020617] text-white overflow-x-hidden">
+
+<!-- Publish Banner -->
+<div id="publishBanner" class="bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm py-2.5 px-4 flex items-center justify-between gap-4">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="bg-white text-blue-700 px-2.5 py-1 rounded-full font-black text-xs"><i class="fa-solid fa-link ml-1"></i> رابط النشر</span>
+    <span class="font-mono bg-black/20 px-3 py-1 rounded-full text-xs md:text-sm" dir="ltr">mishkat-almanar-cyber-3th</span>
+    <span class="hidden md:inline opacity-90">— احفظ الملف وارفعه على Netlify Drop / Google Drive ليفتح على أي جهاز</span>
+  </div>
+  <div class="flex items-center gap-2 shrink-0">
+    <button onclick="copyLink()" class="bg-white text-slate-900 px-4 py-1.5 rounded-full font-bold text-xs hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fa-regular fa-copy"></i> نسخ الرابط</button>
+    <button onclick="document.getElementById('publishBanner').style.display='none'" class="w-7 h-7 bg-white/20 rounded-full grid place-items-center hover:bg-white/30"><i class="fa-solid fa-xmark text-xs"></i></button>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-[#0f172a]/90 backdrop-blur-xl border-b border-white/10">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 grid place-items-center text-white font-black text-lg shadow-lg shadow-cyan-500/20">م</div>
+      <div>
+        <h1 class="font-black text-[15px] md:text-[17px] leading-none">ثانوية مشكاة المنار</h1>
+        <p class="text-cyan-400 text-xs font-bold">الأمن السيبراني • ثالث ثانوي</p>
+      </div>
+      <span class="hidden md:inline bg-lime-400 text-slate-900 text-[11px] font-black px-2.5 py-1 rounded-full mr-2">حصة تفاعلية نشطة</span>
+    </div>
+
+    <div class="flex items-center gap-2 md:gap-3">
+      <div class="hidden lg:flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
+        <div class="w-7 h-7 rounded-full bg-white grid place-items-center text-slate-800"><i class="fa-solid fa-user-graduate text-xs"></i></div>
+        <div class="text-right leading-none">
+          <p class="text-xs font-bold">وضع الطالب</p>
+          <p class="text-[11px] text-white/60">النقاط: <span id="pointsDisplay">0</span></p>
+        </div>
+        <div class="w-8 h-8 relative mr-1">
+          <svg class="w-8 h-8 rotate-[-90deg]"><circle cx="16" cy="16" r="13" stroke="rgba(255,255,255,0.15)" stroke-width="3" fill="none"/><circle id="progressCircle" cx="16" cy="16" r="13" stroke="#22d3ee" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="81.68" stroke-dashoffset="81.68"/></svg>
+          <span id="progressText" class="absolute inset-0 grid place-items-center text-[9px] font-black">0%</span>
+        </div>
+      </div>
+      <button onclick="openTeacherMode()" class="hidden md:flex bg-white/10 hover:bg-white/15 border border-white/10 px-4 py-2 rounded-full text-xs font-bold gap-2 items-center"><i class="fa-solid fa-chalkboard-user text-cyan-400"></i> وضع المعلم</button>
+      <button onclick="toggleMobileMenu()" class="md:hidden w-9 h-9 bg-white text-slate-900 rounded-full grid place-items-center"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="hidden md:hidden border-t border-white/10 bg-[#0f172a] px-4 py-3 space-y-2">
+    <button onclick="openTeacherMode()" class="w-full bg-cyan-500 text-white py-2.5 rounded-full font-bold text-sm"><i class="fa-solid fa-chalkboard-user ml-2"></i>وضع المعلم</button>
+    <div class="flex gap-2">
+      <div class="flex-1 bg-white/5 border border-white/10 rounded-full px-3 py-2 flex items-center justify-between">
+        <span class="text-xs font-bold">التقدم</span><span id="mobileProgress" class="text-cyan-400 font-black text-sm">0%</span>
+      </div>
+      <div class="flex-1 bg-lime-400 text-slate-900 rounded-full px-3 py-2 flex items-center justify-between">
+        <span class="text-xs font-black">النقاط</span><span id="mobilePoints" class="font-black">0</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#0e1a3a] to-[#020617]"></div>
+  <div class="absolute -top-20 -left-20 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[80px]"></div>
+  <div class="absolute -bottom-20 -right-20 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[80px]"></div>
+  <div class="absolute inset-0 opacity-[0.03]" style="background-image:radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size:24px 24px"></div>
+
+  <div class="relative max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-10 grid lg:grid-cols-[1.15fr_0.85fr] gap-6 items-center">
+    <div>
+      <div class="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 px-3 py-1.5 rounded-full text-xs font-bold mb-4">
+        <span class="w-2 h-2 bg-lime-400 rounded-full animate-pulse"></span> درس تفاعلي • جاهز للعرض على السبورة
+        <span class="bg-white text-slate-900 px-2 py-0.5 rounded-full text-[10px] font-black">بدون تثبيت</span>
+      </div>
+      <h2 class="text-[28px] md:text-[42px] font-black leading-[1.1]">الأمن السيبراني<br><span class="bg-gradient-to-r from-cyan-400 to-lime-400 bg-clip-text text-transparent">& البصمة الرقمية</span></h2>
+      <p class="text-white/70 text-sm md:text-[15px] leading-6 mt-3 max-w-[560px]">تطبيق تفاعلي واحد بملف HTML يعمل مباشرة على أي جهاز — بطاقات، سيناريوهات واقعية، واختبار تنافسي لإدارة حصة نشطة وممتعة لطلاب ثالث ثانوي.</p>
+
+      <div class="flex flex-wrap gap-2.5 mt-5">
+        <button onclick="scrollToTabs('cards')" class="bg-cyan-500 hover:bg-cyan-400 text-white px-6 py-3 rounded-full font-black text-sm flex items-center gap-2 shadow-lg shadow-cyan-500/25 transition"><i class="fa-solid fa-layer-group"></i> ابدأ بالبطاقات</button>
+        <button onclick="scrollToTabs('quiz')" class="bg-lime-400 hover:bg-lime-300 text-slate-900 px-6 py-3 rounded-full font-black text-sm flex items-center gap-2 transition"><i class="fa-solid fa-bolt"></i> تحدي سريع 5 د</button>
+        <button onclick="document.getElementById('howToPublish').showModal()" class="bg-white/10 hover:bg-white/15 border border-white/15 text-white px-5 py-3 rounded-full font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-rocket text-cyan-400"></i> كيف أنشر الرابط؟</button>
+      </div>
+
+      <div class="flex items-center gap-4 mt-6 text-xs">
+        <span class="flex items-center gap-1.5 text-white/70"><i class="fa-regular fa-clock text-cyan-400"></i> 35-45 دقيقة</span>
+        <span class="flex items-center gap-1.5 text-white/70"><i class="fa-solid fa-users text-lime-400"></i> فردي + مجموعات</span>
+        <span class="flex items-center gap-1.5 text-white/70"><i class="fa-solid fa-certificate text-gold"></i> شهادة إنجاز</span>
+      </div>
+    </div>
+
+    <div class="relative">
+      <!-- Main visual card -->
+      <div class="relative bg-gradient-to-br from-slate-900 to-slate-800 border border-white/10 rounded-[24px] p-5 md:p-6 shadow-2xl overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"></div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-red-500"></span><span class="w-3 h-3 rounded-full bg-yellow-400"></span><span class="w-3 h-3 rounded-full bg-green-400"></span>
+          </div>
+          <span class="bg-white/10 border border-white/10 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-cyan-400"></i> لوحة التحكم الأمني</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-white text-slate-900 rounded-2xl p-3 text-center">
+            <div class="w-9 h-9 bg-slate-900 text-white rounded-full grid place-items-center mx-auto text-sm"><i class="fa-solid fa-fingerprint"></i></div>
+            <p class="font-black text-xs mt-2 leading-none">البصمة الرقمية</p>
+            <p class="text-[11px] text-slate-500 mt-1">أثرك على الإنترنت</p>
+            <span class="inline-block mt-2 text-[10px] font-black bg-slate-900 text-white px-2 py-0.5 rounded-full">نشطة + سلبية</span>
+          </div>
+          <div class="bg-cyan-500 text-white rounded-2xl p-3 text-center neon-shadow">
+            <div class="w-9 h-9 bg-white text-cyan-600 rounded-full grid place-items-center mx-auto text-sm"><i class="fa-solid fa-shield"></i></div>
+            <p class="font-black text-xs mt-2 leading-none">الأمن السيبراني</p>
+            <p class="text-[11px] text-white/80 mt-1">حماية الأنظمة</p>
+            <span class="inline-block mt-2 text-[10px] font-black bg-white text-cyan-600 px-2 py-0.5 rounded-full">CIA Triad</span>
+          </div>
+          <div class="bg-lime-400 text-slate-900 rounded-2xl p-3 text-center">
+            <div class="w-9 h-9 bg-slate-900 text-lime-400 rounded-full grid place-items-center mx-auto text-sm"><i class="fa-solid fa-user-secret"></i></div>
+            <p class="font-black text-xs mt-2">التصيد</p>
+            <p class="text-[11px] text-slate-600 mt-1">أكبر خطر</p>
+            <span class="inline-block mt-2 text-[10px] font-black bg-slate-900 text-white px-2 py-0.5 rounded-full">90% من الاختراقات</span>
+          </div>
+        </div>
+
+        <div class="mt-4 bg-[#020617] border border-white/10 rounded-2xl p-3 flex items-center gap-3">
+          <img src="https://i.pravatar.cc/100?img=15" class="w-9 h-9 rounded-full border-2 border-cyan-400">
+          <div class="flex-1">
+            <p class="text-xs font-bold">سارة — ثالث ثانوي</p>
+            <p class="text-[11px] text-white/60">أكملت 8 بطاقات • 320 نقطة • <span class="text-lime-400 font-bold">مستوى حارس</span></p>
+          </div>
+          <div class="text-left">
+            <p class="text-[10px] text-white/50">مستواك</p>
+            <div class="flex gap-1"><i class="fa-solid fa-shield-halved text-cyan-400 text-xs"></i><i class="fa-solid fa-shield-halved text-cyan-400 text-xs"></i><i class="fa-solid fa-shield-halved text-white/20 text-xs"></i></div>
+          </div>
+        </div>
+
+        <div class="mt-4 flex gap-2">
+          <div class="flex-1 bg-white/5 border border-white/10 rounded-full px-3 py-2 flex items-center justify-between text-xs"><span class="text-white/60">صعوبة</span><span class="font-black text-lime-400">متوسطة</span></div>
+          <div class="flex-1 bg-white/5 border border-white/10 rounded-full px-3 py-2 flex items-center justify-between text-xs"><span class="text-white/60">وقت البطاقة</span><span class="font-black">30ث</span></div>
+        </div>
+      </div>
+
+      <!-- Floating badges -->
+      <div class="absolute -top-2 -right-2 bg-gold text-slate-900 px-3 py-1.5 rounded-full text-xs font-black shadow-lg rotate-3 hidden md:flex items-center gap-1.5"><i class="fa-solid fa-trophy"></i> جاهز للمسابقة!</div>
+      <div class="absolute -bottom-3 -left-2 bg-white text-slate-900 px-3 py-1.5 rounded-full text-xs font-black shadow-lg -rotate-2 hidden md:flex items-center gap-1.5"><i class="fa-solid fa-qrcode text-cyan-600"></i> QR للمشاركة</div>
+    </div>
+  </div>
+</section>
+
+<!-- Tabs -->
+<nav class="max-w-[1280px] mx-auto px-4 md:px-6 mt-2">
+  <div class="glass rounded-full p-1.5 flex gap-1.5 overflow-x-auto scrollbar-hide">
+    <button data-tab="lesson" class="tab-btn active whitespace-nowrap flex-1 bg-white text-slate-900 px-4 py-2.5 rounded-full font-black text-sm flex items-center justify-center gap-2"><i class="fa-solid fa-book-open"></i> الدرس السريع</button>
+    <button data-tab="cards" class="tab-btn whitespace-nowrap flex-1 text-white/80 hover:text-white px-4 py-2.5 rounded-full font-bold text-sm flex items-center justify-center gap-2"><i class="fa-solid fa-clone"></i> البطاقات</button>
+    <button data-tab="scenarios" class="tab-btn whitespace-nowrap flex-1 text-white/80 hover:text-white px-4 py-2.5 rounded-full font-bold text-sm flex items-center justify-center gap-2"><i class="fa-solid fa-film"></i> سيناريوهات</button>
+    <button data-tab="quiz" class="tab-btn whitespace-nowrap flex-1 text-white/80 hover:text-white px-4 py-2.5 rounded-full font-bold text-sm flex items-center justify-center gap-2"><i class="fa-solid fa-bolt"></i> الاختبار</button>
+    <button data-tab="board" class="tab-btn whitespace-nowrap flex-1 text-white/80 hover:text-white px-4 py-2.5 rounded-full font-bold text-sm flex items-center justify-center gap-2"><i class="fa-solid fa-ranking-star"></i> الإنجاز</button>
+  </div>
+</nav>
+
+<main class="max-w-[1280px] mx-auto px-4 md:px-6 py-6 space-y-6">
+
+  <!-- Lesson Tab -->
+  <section id="tab-lesson" class="tab-panel">
+    <div class="grid lg:grid-cols-[1.4fr_0.6fr] gap-5">
+      <div class="space-y-4">
+        <div class="bg-white rounded-[20px] p-5 md:p-6 text-slate-900">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <span class="bg-slate-900 text-white text-[11px] font-black px-3 py-1 rounded-full">المفهوم 1</span>
+              <h3 class="font-black text-xl mt-3 leading-none">ما هو الأمن السيبراني؟</h3>
+              <p class="text-slate-600 text-sm leading-6 mt-2">حماية الأنظمة والشبكات والبرامج والبيانات من الهجمات الرقمية. يهدف إلى الحفاظ على <b>السرية - السلامة - التوافر (CIA)</b>.</p>
+            </div>
+            <div class="w-14 h-14 rounded-2xl bg-cyan-500 text-white grid place-items-center text-xl shrink-0"><i class="fa-solid fa-shield-halved"></i></div>
+          </div>
+          <div class="grid md:grid-cols-3 gap-3 mt-5">
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3">
+              <p class="font-black text-sm flex items-center gap-2"><span class="w-7 h-7 bg-slate-900 text-white rounded-full grid place-items-center text-xs">S</span> السرية</p>
+              <p class="text-xs text-slate-500 mt-1 leading-5">منع وصول غير المصرح لهم — تشفير، كلمات سر قوية، مصادقة ثنائية.</p>
+            </div>
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3">
+              <p class="font-black text-sm flex items-center gap-2"><span class="w-7 h-7 bg-cyan-500 text-white rounded-full grid place-items-center text-xs">I</span> السلامة</p>
+              <p class="text-xs text-slate-500 mt-1 leading-5">ضمان عدم تعديل البيانات — التوقيع الرقمي، النسخ الاحتياطي.</p>
+            </div>
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3">
+              <p class="font-black text-sm flex items-center gap-2"><span class="w-7 h-7 bg-lime-500 text-white rounded-full grid place-items-center text-xs">A</span> التوافر</p>
+              <p class="text-xs text-slate-500 mt-1 leading-5">بقاء الخدمة متاحة — حماية من هجمات حجب الخدمة DDoS.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-[20px] p-5 md:p-6 text-slate-900">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <span class="bg-lime-400 text-slate-900 text-[11px] font-black px-3 py-1 rounded-full">المفهوم 2</span>
+              <h3 class="font-black text-xl mt-3">البصمة الرقمية</h3>
+              <p class="text-slate-600 text-sm leading-6 mt-2">كل أثر تتركه على الإنترنت — منشور، تعليق، بحث، موقع جغرافي، وحتى إعجاب. تبقى لسنوات وقد يراها الجامعات وأصحاب العمل.</p>
+            </div>
+            <div class="w-14 h-14 rounded-2xl bg-slate-900 text-lime-400 grid place-items-center text-xl shrink-0"><i class="fa-solid fa-fingerprint"></i></div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-3 mt-5">
+            <div class="border-2 border-cyan-500 rounded-2xl p-4 bg-cyan-50/50">
+              <p class="font-black text-sm text-cyan-700"><i class="fa-solid fa-hand-sparkles ml-2"></i>بصمة نشطة</p>
+              <p class="text-xs text-slate-600 mt-1">تنشئها بإرادتك: نشر صور، تغريدات، تعبئة نماذج، إنشاء حساب.</p>
+              <div class="flex flex-wrap gap-1.5 mt-3"><span class="bg-white border px-2.5 py-1 rounded-full text-[11px] font-bold">منشور انستقرام</span><span class="bg-white border px-2.5 py-1 rounded-full text-[11px] font-bold">تعليق يوتيوب</span></div>
+            </div>
+            <div class="border-2 border-slate-200 rounded-2xl p-4 bg-slate-50">
+              <p class="font-black text-sm"><i class="fa-solid fa-eye-slash ml-2"></i>بصمة سلبية</p>
+              <p class="text-xs text-slate-600 mt-1">تُجمع دون علمك: عنوان IP، ملفات تعريف الارتباط، سجل التصفح، الموقع.</p>
+              <div class="flex flex-wrap gap-1.5 mt-3"><span class="bg-white border px-2.5 py-1 rounded-full text-[11px] font-bold">Cookies</span><span class="bg-white border px-2.5 py-1 rounded-full text-[11px] font-bold">الموقع الجغرافي</span></div>
+            </div>
+          </div>
+          <div class="mt-4 bg-amber-50 border border-amber-200 rounded-2xl p-3 flex gap-3 items-start">
+            <span class="w-8 h-8 bg-amber-500 text-white rounded-full grid place-items-center shrink-0 text-sm"><i class="fa-solid fa-triangle-exclamation"></i></span>
+            <p class="text-xs leading-6 text-amber-900"><b>قاعدة ذهبية:</b> فكّر قبل النشر — هل ترغب أن يرى مديرك أو أسرتك هذا بعد 10 سنوات؟ إذا لا، لا تنشره.</p>
+          </div>
+        </div>
+
+        <!-- Threats accordion -->
+        <div class="bg-[#0f172a] border border-white/10 rounded-[20px] p-5">
+          <h4 class="font-black flex items-center gap-2"><i class="fa-solid fa-bug text-red-400"></i> أشهر التهديدات — اضغط لعرض الحماية</h4>
+          <div class="mt-4 space-y-2" id="threats">
+            <!-- items via JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="bg-gradient-to-br from-cyan-500 to-blue-600 rounded-[20px] p-5 text-white relative overflow-hidden">
+          <div class="absolute -top-10 -left-10 w-32 h-32 bg-white/15 rounded-full blur-2xl"></div>
+          <h4 class="font-black text-lg flex items-center gap-2"><i class="fa-solid fa-list-check"></i> checklist الحماية اليوم</h4>
+          <p class="text-white/80 text-xs mt-1">طبّقها الآن واحصل على نقاط</p>
+          <ul id="checklist" class="mt-4 space-y-2.5">
+            <!-- checklist items -->
+          </ul>
+          <div class="mt-4 bg-white text-slate-900 rounded-full px-4 py-2.5 flex items-center justify-between">
+            <span class="text-xs font-bold">مستوى حمايتك</span><span id="checkScore" class="font-black text-cyan-600">0/6</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-[20px] p-5 text-slate-900">
+          <h4 class="font-black">كلمة سر قوية؟ جرّب</h4>
+          <div class="mt-3 flex gap-2">
+            <input id="passInput" type="text" placeholder="اكتب كلمة سر..." class="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2.5 text-sm outline-none focus:border-cyan-400">
+            <button onclick="testPassword()" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-black">افحص</button>
+          </div>
+          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden"><div id="passBar" class="h-full w-0 bg-red-400 transition-all"></div></div>
+          <p id="passHint" class="text-xs text-slate-500 mt-2">استخدم 12+ حرف، رموز، أرقام، وتجنب اسمك أو تاريخ ميلادك.</p>
+          <div class="mt-3 flex flex-wrap gap-1.5 text-[11px]"><span class="bg-slate-900 text-white px-2.5 py-1 rounded-full">Mishkat#2025$Secure</span><span class="bg-red-50 border border-red-200 text-red-600 px-2.5 py-1 rounded-full">123456 ❌</span></div>
+        </div>
+
+        <div class="bg-lime-400 rounded-[20px] p-5 text-slate-900">
+          <h4 class="font-black flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i> للمعلم — إدارة الحصة (10 د)</h4>
+          <ol class="text-xs leading-6 mt-2 list-decimal mr-4 font-medium">
+            <li>اعرض الدرس السريع + ناقش CIA بمثال مدرسي</li>
+            <li>وزّع الطلاب مجموعات وابدأ البطاقات</li>
+            <li>سيناريو واحد جماعي ثم اختبار تنافسي</li>
+          </ol>
+          <button onclick="scrollToTabs('cards')" class="mt-4 w-full bg-slate-900 text-white py-3 rounded-full font-black text-sm">الانتقال للبطاقات <i class="fa-solid fa-arrow-left mr-1"></i></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Tab -->
+  <section id="tab-cards" class="tab-panel hidden">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+      <div>
+        <h3 class="font-black text-xl">بطاقات المراجعة التفاعلية</h3>
+        <p class="text-white/60 text-sm">اقلب البطاقة، اختبر نفسك، ثم صنّفها: أتقنتها / تحتاج مراجعة — النظام يحفظ تقدمك تلقائياً.</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="shuffleCards()" class="bg-white/10 hover:bg-white/15 border border-white/10 px-4 py-2 rounded-full text-sm font-bold"><i class="fa-solid fa-shuffle ml-1"></i> خلط</button>
+        <button onclick="resetCards()" class="bg-white text-slate-900 px-4 py-2 rounded-full text-sm font-black"><i class="fa-solid fa-rotate ml-1"></i> إعادة</button>
+      </div>
+    </div>
+
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2 text-xs">
+        <span class="bg-white text-slate-900 px-3 py-1.5 rounded-full font-black" id="cardCounter">1 / 12</span>
+        <span class="bg-lime-400 text-slate-900 px-3 py-1.5 rounded-full font-black">أتقنت: <b id="knownCount">0</b></span>
+        <span class="bg-white/10 border border-white/10 px-3 py-1.5 rounded-full font-bold text-white">تحتاج مراجعة: <b id="unknownCount">0</b></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="prevCard()" class="w-9 h-9 bg-white/10 border border-white/10 rounded-full grid place-items-center hover:bg-white/15"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+        <button onclick="nextCard()" class="w-9 h-9 bg-cyan-500 text-white rounded-full grid place-items-center hover:bg-cyan-400"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+      </div>
+    </div>
+
+    <div class="mt-4 grid lg:grid-cols-[1.3fr_0.7fr] gap-4">
+      <div id="flashcard" class="card-flip cursor-pointer" onclick="flipCard()">
+        <div class="card-inner relative min-h-[320px]">
+          <div class="card-front absolute inset-0 bg-white rounded-[22px] p-6 text-slate-900 flex flex-col">
+            <div class="flex items-center justify-between">
+              <span class="bg-slate-900 text-white text-xs font-black px-3 py-1 rounded-full" id="cardTag">سؤال 1</span>
+              <span class="text-cyan-600 text-xs font-bold"><i class="fa-regular fa-lightbulb ml-1"></i> اضغط للقلب</span>
+            </div>
+            <div class="flex-1 grid place-items-center text-center py-6">
+              <div>
+                <div class="w-12 h-12 bg-cyan-500 text-white rounded-2xl grid place-items-center mx-auto text-lg"><i id="cardIcon" class="fa-solid fa-shield"></i></div>
+                <h4 id="cardQ" class="font-black text-[18px] md:text-xl mt-4 leading-7">ما الفرق بين البصمة الرقمية النشطة والسلبية؟</h4>
+                <p class="text-slate-500 text-sm mt-2">فكّر 10 ثوانٍ ثم اقلب البطاقة</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-xs text-slate-400"><span>اضغط على البطاقة</span><span class="flex items-center gap-1"><span class="w-2 h-2 bg-cyan-500 rounded-full"></span> تلميح متاح</span></div>
+          </div>
+          <div class="card-back absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800 border border-white/10 rounded-[22px] p-6 text-white flex flex-col">
+            <span class="bg-lime-400 text-slate-900 text-xs font-black px-3 py-1 rounded-full self-start">الإجابة</span>
+            <div class="flex-1 grid place-items-center text-center py-4">
+              <div>
+                <p id="cardA" class="font-bold text-[15px] leading-7">النشطة: تصنعها بإرادتك (نشر، تعليق، تسجيل). السلبية: تُجمع تلقائياً (IP، كوكيز، موقع).</p>
+                <div id="cardExample" class="mt-4 bg-white/10 border border-white/10 rounded-2xl p-3 text-xs leading-6 text-white/90">مثال: نشرت صورة حفل تخرج = نشطة. موقعك تتبعه خرائط جوجل = سلبية.</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="event.stopPropagation(); markCard(false)" class="flex-1 bg-white/10 hover:bg-white/15 border border-white/10 py-2.5 rounded-full text-sm font-bold"><i class="fa-regular fa-circle-xmark ml-1"></i> تحتاج مراجعة</button>
+              <button onclick="event.stopPropagation(); markCard(true)" class="flex-1 bg-lime-400 hover:bg-lime-300 text-slate-900 py-2.5 rounded-full text-sm font-black"><i class="fa-solid fa-check ml-1"></i> أتقنتها</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <div class="bg-white rounded-[18px] p-4 text-slate-900">
+          <h4 class="font-black text-sm">تلميح سريع</h4>
+          <p id="hintText" class="text-xs leading-6 text-slate-600 mt-2">تذكّر: كل تفاعل يترك أثراً — حتى "التصفح الخفي" يترك بصمة عند مزود الخدمة.</p>
+          <button onclick="showHint()" class="mt-3 w-full bg-slate-900 text-white py-2.5 rounded-full text-sm font-black"><i class="fa-regular fa-lightbulb ml-1"></i> أظهر تلميحاً إضافياً</button>
+        </div>
+        <div class="bg-[#0f172a] border border-white/10 rounded-[18px] p-4">
+          <h4 class="font-black text-sm flex items-center gap-2"><i class="fa-solid fa-graduation-cap text-cyan-400"></i> كل البطاقات</h4>
+          <div id="cardDots" class="flex flex-wrap gap-2 mt-3"></div>
+          <p class="text-[11px] text-white/50 mt-3">الأخضر = أتقنتها، البرتقالي = مراجعة، الرمادي = لم تُجب بعد</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scenarios -->
+  <section id="tab-scenarios" class="tab-panel hidden">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div>
+        <h3 class="font-black text-xl">سيناريوهات واقعية — ماذا تفعل؟</h3>
+        <p class="text-white/60 text-sm">اختر قرارك وشاهد أثره على بصمتك الرقمية مباشرة. مناسبة للنقاش الجماعي.</p>
+      </div>
+      <span class="bg-amber-400 text-slate-900 px-3 py-1.5 rounded-full text-xs font-black">قرارك = بصمتك</span>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-4 mt-4" id="scenarioGrid"></div>
+
+    <div id="scenarioModal" class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm p-4 grid place-items-center">
+      <div class="bg-white rounded-[22px] max-w-[640px] w-full p-6 text-slate-900 relative max-h-[90vh] overflow-auto">
+        <button onclick="closeScenario()" class="absolute top-4 left-4 w-8 h-8 bg-slate-100 rounded-full grid place-items-center"><i class="fa-solid fa-xmark text-sm"></i></button>
+        <span id="scTag" class="bg-slate-900 text-white text-xs font-black px-3 py-1 rounded-full">سيناريو 1</span>
+        <h4 id="scTitle" class="font-black text-xl mt-3">رسالة تصيد باسم المدرسة</h4>
+        <p id="scDesc" class="text-sm leading-6 text-slate-600 mt-2"></p>
+        <div id="scOptions" class="mt-4 space-y-2.5"></div>
+        <div id="scResult" class="hidden mt-4 rounded-2xl p-4 border"></div>
+        <div class="mt-4 flex gap-2">
+          <button onclick="closeScenario()" class="flex-1 bg-slate-100 py-3 rounded-full font-black text-sm">إغلاق</button>
+          <button onclick="nextScenario()" class="flex-1 bg-cyan-500 text-white py-3 rounded-full font-black text-sm">السيناريو التالي</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quiz -->
+  <section id="tab-quiz" class="tab-panel hidden">
+    <div class="bg-gradient-to-r from-slate-900 to-[#0f172a] border border-white/10 rounded-[22px] p-4 md:p-5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-cyan-500 rounded-full grid place-items-center"><i class="fa-solid fa-stopwatch text-white"></i></div>
+        <div>
+          <h3 class="font-black">الاختبار السريع — 12 سؤال متنوع</h3>
+          <p class="text-white/60 text-xs">اختر الإجابة، تحصل على تغذية راجعة فورية + نقاط. يمكنك الإعادة.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="bg-white text-slate-900 px-4 py-2 rounded-full font-black text-sm flex items-center gap-2"><i class="fa-regular fa-clock text-cyan-600"></i> <span id="quizTimer">05:00</span></div>
+        <button onclick="startQuiz()" id="startQuizBtn" class="bg-lime-400 text-slate-900 px-5 py-2.5 rounded-full font-black text-sm">ابدأ الآن</button>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-[1.2fr_0.8fr] gap-4 mt-4">
+      <div class="bg-white rounded-[22px] p-5 md:p-6 text-slate-900">
+        <div class="flex items-center justify-between">
+          <span class="bg-slate-900 text-white px-3 py-1 rounded-full text-xs font-black" id="quizProgress">سؤال 1 من 12</span>
+          <span class="bg-cyan-500 text-white px-3 py-1 rounded-full text-xs font-black" id="quizScoreMini">النقاط: 0</span>
+        </div>
+        <div class="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden"><div id="quizBar" class="h-full bg-cyan-500 w-0 transition-all"></div></div>
+
+        <div id="quizBox" class="mt-6">
+          <p class="text-slate-400 text-sm text-center py-10">اضغط "ابدأ الآن" لبدء التحدي — الأسئلة تظهر هنا مع شرح فوري بعد كل إجابة.</p>
+        </div>
+
+        <div class="mt-6 flex gap-2">
+          <button onclick="prevQuiz()" class="flex-1 bg-slate-100 py-3 rounded-full font-bold text-sm">السابق</button>
+          <button onclick="nextQuiz()" class="flex-1 bg-slate-900 text-white py-3 rounded-full font-black text-sm">التالي <i class="fa-solid fa-arrow-left mr-1"></i></button>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="bg-[#0f172a] border border-white/10 rounded-[22px] p-5">
+          <h4 class="font-black flex items-center gap-2"><i class="fa-solid fa-trophy text-gold"></i> لوحة النتائج اللحظية</h4>
+          <div id="liveBoard" class="mt-4 space-y-2"></div>
+          <button onclick="shareResult()" class="mt-4 w-full bg-white text-slate-900 py-3 rounded-full font-black text-sm"><i class="fa-solid fa-share-nodes ml-2"></i> مشاركة نتيجتي</button>
+        </div>
+
+        <div class="bg-lime-400 rounded-[22px] p-5 text-slate-900">
+          <h4 class="font-black">نصيحة للمعلم</h4>
+          <p class="text-sm leading-6 mt-2 font-medium">شغّل الاختبار على السبورة، واجعل كل مجموعة تتناقش 20 ثانية قبل الاختيار — يزيد التفاعل ويقل الغش.</p>
+          <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+            <div class="bg-white rounded-2xl p-2.5"><p class="font-black text-lg">90%</p><p class="text-[11px] font-bold">تصيد</p></div>
+            <div class="bg-white rounded-2xl p-2.5"><p class="font-black text-lg">12+</p><p class="text-[11px] font-bold">حرف لكلمة السر</p></div>
+            <div class="bg-white rounded-2xl p-2.5"><p class="font-black text-lg">2FA</p><p class="text-[11px] font-bold">حماية مضاعفة</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Board / Certificate -->
+  <section id="tab-board" class="tab-panel hidden">
+    <div class="grid lg:grid-cols-2 gap-5">
+      <div class="bg-white rounded-[22px] p-6 text-slate-900">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-slate-900 text-white rounded-2xl grid place-items-center"><i class="fa-solid fa-award"></i></div>
+          <div>
+            <h3 class="font-black text-lg">شهادة إنجاز — الأمن السيبراني</h3>
+            <p class="text-slate-500 text-xs">تُنشأ تلقائياً باسم الطالب عند إكمال 70%</p>
+          </div>
+        </div>
+        <div class="mt-5 border-2 border-slate-900 rounded-[18px] p-5 relative overflow-hidden bg-gradient-to-br from-white to-slate-50">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 via-blue-600 to-lime-400"></div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black tracking-widest text-slate-500">MISHKAT ALMANAR • CYBER</span><span class="bg-gold text-slate-900 px-2.5 py-1 rounded-full text-[11px] font-black">ثالث ثانوي</span>
+          </div>
+          <h4 class="font-black text-2xl mt-4">شهادة إتمام</h4>
+          <p class="text-sm text-slate-600 mt-1">يُمنح للطالب/ـة</p>
+          <input id="certName" placeholder="اكتب اسمك هنا" class="mt-3 w-full bg-white border-2 border-slate-900 rounded-full px-4 py-2.5 font-black text-center outline-none">
+          <p class="text-xs text-slate-600 mt-3 leading-6">أتم/ت بنجاح وحدة <b>الأمن السيبراني والبصمة الرقمية</b> وحصل/ت على <span id="certScore" class="font-black text-cyan-600">0%</span> بتقدير <span id="certGrade" class="font-black">—</span>.</p>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-xs"><p class="font-black">إدارة المدرسة</p><p class="text-slate-500">ثانوية مشكاة المنار</p></div>
+            <div class="text-left"><p class="text-xs font-bold">التاريخ</p><p id="certDate" class="text-xs text-slate-600">—</p></div>
+          </div>
+          <div class="mt-4 flex gap-2">
+            <button onclick="printCert()" class="flex-1 bg-slate-900 text-white py-3 rounded-full font-black text-sm"><i class="fa-solid fa-print ml-2"></i> طباعة الشهادة</button>
+            <button onclick="downloadCert()" class="flex-1 bg-cyan-500 text-white py-3 rounded-full font-black text-sm"><i class="fa-solid fa-download ml-2"></i> حفظ PDF</button>
+          </div>
+        </div>
+        <div class="mt-4 bg-amber-50 border border-amber-200 rounded-2xl p-3 text-xs leading-6 text-amber-900"><b>ملاحظة:</b> الدرجة تُحسب من البطاقات + الاختبار + الـ checklist. أكملها لتحصل على ختم "حارس رقمي".</div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="bg-[#0f172a] border border-white/10 rounded-[22px] p-5">
+          <h4 class="font-black flex items-center gap-2"><i class="fa-solid fa-chart-simple text-cyan-400"></i> إحصائياتي</h4>
+          <div class="grid grid-cols-3 gap-3 mt-4">
+            <div class="bg-white rounded-2xl p-3 text-center text-slate-900"><p class="font-black text-xl" id="statCards">0/12</p><p class="text-[11px] font-bold text-slate-500">بطاقات</p></div>
+            <div class="bg-cyan-500 rounded-2xl p-3 text-center text-white"><p class="font-black text-xl" id="statQuiz">0%</p><p class="text-[11px] font-bold">الاختبار</p></div>
+            <div class="bg-lime-400 rounded-2xl p-3 text-center text-slate-900"><p class="font-black text-xl" id="statPoints">0</p><p class="text-[11px] font-bold">نقطة</p></div>
+          </div>
+          <div class="mt-4 bg-white/5 border border-white/10 rounded-2xl p-3">
+            <div class="flex items-center justify-between text-xs font-bold"><span class="text-white/70">التقدم الكلي</span><span id="totalPercent" class="text-cyan-400">0%</span></div>
+            <div class="mt-2 h-2 bg-white/10 rounded-full overflow-hidden"><div id="totalBar" class="h-full bg-gradient-to-r from-cyan-500 to-lime-400 w-0 transition-all"></div></div>
+          </div>
+          <div class="mt-4 flex gap-2">
+            <button onclick="resetAll()" class="flex-1 bg-white/10 border border-white/10 py-2.5 rounded-full text-sm font-bold hover:bg-white/15">إعادة تعيين</button>
+            <button onclick="exportData()" class="flex-1 bg-white text-slate-900 py-2.5 rounded-full text-sm font-black">تصدير النتائج</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-[22px] p-5 text-slate-900">
+          <h4 class="font-black flex items-center gap-2"><i class="fa-solid fa-qrcode text-slate-900"></i> شارك الدرس</h4>
+          <p class="text-xs text-slate-500 mt-1 leading-5">احفظ هذا الملف باسم <b>mishkat-almanar-cyber-3th.html</b> ثم ارفعه — يعمل دون إنترنت بعد التحميل.</p>
+          <div class="mt-4 bg-slate-900 text-white rounded-2xl p-4 flex items-center gap-3">
+            <div class="w-16 h-16 bg-white rounded-xl grid place-items-center text-slate-900 text-[10px] font-black leading-none text-center p-1">QR<br>CODE<br><i class="fa-solid fa-qrcode text-lg mt-1"></i></div>
+            <div class="flex-1">
+              <p class="font-mono text-xs bg-white/10 px-3 py-2 rounded-full" dir="ltr">mishkat-almanar-cyber-3th</p>
+              <p class="text-[11px] text-white/60 mt-2">افتح على أي جوال أو سبورة ذكية — لا يحتاج تثبيت</p>
+            </div>
+          </div>
+          <div class="mt-3 grid grid-cols-2 gap-2">
+            <button onclick="copyLink()" class="bg-cyan-500 text-white py-3 rounded-full font-black text-sm"><i class="fa-regular fa-copy ml-1"></i> نسخ الرابط</button>
+            <button onclick="downloadHTML()" class="bg-slate-900 text-white py-3 rounded-full font-black text-sm"><i class="fa-solid fa-download ml-1"></i> تحميل الملف</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="max-w-[1280px] mx-auto px-4 md:px-6 pb-6">
+  <div class="bg-white/5 border border-white/10 rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+    <p class="text-white/60">© ثانوية مشكاة المنار — وحدة الأمن السيبراني | تصميم تفاعلي للمعلم والطالب • يعمل Offline بعد الحفظ</p>
+    <div class="flex items-center gap-2">
+      <span class="bg-white text-slate-900 px-3 py-1 rounded-full font-black">mishkat-almanar-cyber-3th</span>
+      <button onclick="window.print()" class="bg-white/10 border border-white/10 px-3 py-1.5 rounded-full font-bold hover:bg-white/15"><i class="fa-solid fa-print ml-1"></i> طباعة</button>
+    </div>
+  </div>
+</footer>
+
+<!-- Modals -->
+<dialog id="howToPublish" class="backdrop:bg-black/60 p-0 rounded-[22px] max-w-[640px] w-[92%] text-right">
+  <div class="bg-white p-6 text-slate-900">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <h3 class="font-black text-xl">كيف أنشر الرابط ليفتح على أي جهاز؟</h3>
+        <p class="text-sm text-slate-600 mt-2 leading-6">الملف الحالي هو صفحة واحدة <b>HTML</b> — احفظه ثم اتبع إحدى الطرق التالية (دقيقة واحدة):</p>
+      </div>
+      <button onclick="document.getElementById('howToPublish').close()" class="w-8 h-8 bg-slate-100 rounded-full grid place-items-center shrink-0"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="mt-5 grid md:grid-cols-3 gap-3">
+      <div class="border-2 border-cyan-500 rounded-2xl p-4 bg-cyan-50">
+        <p class="font-black text-sm"><i class="fa-solid fa-bolt text-cyan-600 ml-2"></i>الأسرع — Netlify Drop</p>
+        <ol class="text-xs leading-6 mt-2 list-decimal mr-4"><li>احفظ الملف باسم <b>mishkat-almanar-cyber-3th.html</b></li><li>افتح <b>app.netlify.com/drop</b></li><li>اسحب الملف — ستحصل على رابط عام فوراً</li></ol>
+        <span class="inline-block mt-3 bg-cyan-500 text-white text-[11px] font-black px-2.5 py-1 rounded-full">موصى به</span>
+      </div>
+      <div class="border border-slate-200 rounded-2xl p-4 bg-slate-50">
+        <p class="font-black text-sm"><i class="fa-brands fa-google-drive text-blue-600 ml-2"></i>Google Drive</p>
+        <ol class="text-xs leading-6 mt-2 list-decimal mr-4"><li>ارفع الملف على Drive</li><li>مشاركة → "أي شخص لديه الرابط"</li><li>انسخ الرابط للطلاب</li></ol>
+      </div>
+      <div class="border border-slate-200 rounded-2xl p-4 bg-slate-50">
+        <p class="font-black text-sm"><i class="fa-solid fa-school ml-2"></i>منصة المدرسة</p>
+        <ol class="text-xs leading-6 mt-2 list-decimal mr-4"><li>ارفع الملف كمورد في LMS</li><li>اجعل الرابط <b>mishkat-almanar-cyber-3th</b></li><li>شاركه عبر QR في الفصل</li></ol>
+      </div>
+    </div>
+    <div class="mt-5 flex gap-2">
+      <button onclick="downloadHTML()" class="flex-1 bg-slate-900 text-white py-3 rounded-full font-black text-sm"><i class="fa-solid fa-download ml-2"></i> تحميل الملف الآن</button>
+      <button onclick="copyLink()" class="flex-1 bg-cyan-500 text-white py-3 rounded-full font-black text-sm"><i class="fa-regular fa-copy ml-2"></i> نسخ اسم الرابط</button>
+    </div>
+    <p class="text-[11px] text-slate-500 mt-3 text-center">بعد الرفع، الرابط سيعمل على الجوال والسبورة بدون تثبيت — حتى بدون إنترنت إذا حُفظ في الجهاز.</p>
+  </div>
+</dialog>
+
+<dialog id="teacherDialog" class="backdrop:bg-black/60 p-0 rounded-[22px] max-w-[560px] w-[92%]">
+  <div class="bg-slate-900 text-white p-6">
+    <div class="flex items-center justify-between">
+      <h3 class="font-black text-lg"><i class="fa-solid fa-chalkboard-user text-cyan-400 ml-2"></i> وضع المعلم</h3>
+      <button onclick="document.getElementById('teacherDialog').close()" class="w-8 h-8 bg-white/10 rounded-full grid place-items-center"><i class="fa-solid fa-xmark text-sm"></i></button>
+    </div>
+    <div class="mt-4 flex gap-2">
+      <button onclick="revealAllAnswers()" class="flex-1 bg-lime-400 text-slate-900 py-3 rounded-full font-black text-sm">إظهار كل الإجابات</button>
+      <button onclick="hideAllAnswers()" class="flex-1 bg-white/10 border border-white/10 py-3 rounded-full font-bold text-sm">إخفاؤها</button>
+    </div>
+    <div class="mt-4 bg-white/5 border border-white/10 rounded-2xl p-4">
+      <h4 class="font-black text-sm">إجابات الاختبار (للمعلم فقط)</h4>
+      <div id="teacherAnswers" class="mt-3 space-y-1.5 text-xs leading-6 max-h-[220px] overflow-auto pr-1"></div>
+    </div>
+    <label class="flex items-center gap-2 mt-4 text-sm"><input id="proToggle" type="checkbox" class="accent-cyan-500"> تفعيل المؤقت الجماعي (5 د)</label>
+  </div>
+</dialog>
+
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-5 py-3 rounded-full text-sm font-bold shadow-xl hidden items-center gap-2 z-[70]"><i class="fa-solid fa-circle-check text-lime-400"></i> <span id="toastMsg">تم النسخ!</span></div>
+
+<script>
+// ---------- State ----------
+let points = parseInt(localStorage.getItem('mishkat_points')||'0');
+let knownSet = new Set(JSON.parse(localStorage.getItem('mishkat_known')||'[]'));
+let unknownSet = new Set(JSON.parse(localStorage.getItem('mishkat_unknown')||'[]'));
+let checklistState = JSON.parse(localStorage.getItem('mishkat_check')||'[false,false,false,false,false,false]');
+let quizAnswers = JSON.parse(localStorage.getItem('mishkat_quizAns')||'{}');
+let currentCard = 0;
+let quizIndex = 0;
+let quizStarted=false, timerInt=null, timeLeft=300;
+
+// ---------- Data ----------
+const threatsData=[
+  {icon:'fa-envelope', color:'bg-red-500', title:'التصيد الاحتيالي (Phishing)', desc:'رسالة أو رابط مزيف يسرق بياناتك — يمثل أكثر من 90% من الاختراقات.', protect:'تحقق من المرسل، مرر فوق الرابط قبل النقر، لا تدخل بياناتك إلا عبر الموقع الرسمي.'},
+  {icon:'fa-lock', color:'bg-amber-500', title:'برامج الفدية', desc:'تشفر ملفاتك وتطلب فدية — تنتشر عبر مرفقات مشبوهة.', protect:'تحديث النظام، نسخ احتياطي دوري، عدم فتح مرفقات مجهولة.'},
+  {icon:'fa-wifi', color:'bg-cyan-500', title:'شبكات واي-فاي عامة', desc:'قد يتجسس المهاجم على بياناتك في المقاهي والمطارات.', protect:'استخدم VPN، تجنب المعاملات البنكية على الشبكات العامة.'},
+  {icon:'fa-user-shield', color:'bg-slate-800', title:'هندسة اجتماعية', desc:'خداعك لتكشف معلوماتك بنفسك عبر انتحال الثقة.', protect:'لا تشارك رمز التحقق OTP أبداً، وتأكد عبر قناة ثانية.'},
+];
+
+const checklistItems=[
+  'فعّلت التحقق بخطوتين على بريدي',
+  'كلمة سرّي 12+ حرف مع رموز',
+  'راجعت إعدادات الخصوصية (انستا/تيكتوك)',
+  'حذفت منشوراً قديماً يضر بصمتي',
+  'أستخدم مدير كلمات سر',
+  'أنشأت نسخة احتياطية لملفاتي'
+];
+
+const cards=[
+  {tag:'سؤال 1', q:'ما الفرق بين البصمة الرقمية النشطة والسلبية؟', a:'النشطة: تصنعها بإرادتك (نشر، تعليق، تسجيل). السلبية: تُجمع تلقائياً (IP، كوكيز، موقع).', ex:'مثال: نشرت صورة حفل تخرج = نشطة. موقعك تتبعه خرائط جوجل = سلبية.', icon:'fa-fingerprint', hint:'تذكّر: حتى "التصفح الخفي" يترك أثراً عند مزود الخدمة.'},
+  {tag:'CIA', q:'ما مثلث CIA في الأمن السيبراني؟', a:'السرية (Confidentiality) - السلامة (Integrity) - التوافر (Availability).', ex:'مثال مدرسي: درجات الطلاب سرية، لا تُعدل، ومتاحة عند الحاجة.', icon:'fa-shield-halved', hint:'احفظها: سر + سلامة + توفر = أمان.'},
+  {tag:'كلمة سر', q:'ما مواصفات كلمة السر القوية؟', a:'12+ حرف، مزيج أحرف كبيرة/صغيرة + أرقام + رموز، فريدة لكل حساب، مع 2FA.', ex:'قوية: Mishkat#2025$Secure | ضعيفة: ahmed123', icon:'fa-key', hint:'استخدم جملة مرورية: Mishkat-Th3-Students-Rock!'},
+  {tag:'تصيد', q:'كيف تكشف رسالة تصيد؟', a:'أخطاء لغوية، ضغط عاجل، رابط غريب، طلب بيانات حساسة، مرسل مقلد.', ex:'مثال: "حسابك سيُغلق خلال ساعتين! اضغط هنا" + رابط bit.ly مشبوه.', icon:'fa-fish', hint:'مرر الفأرة فوق الرابط قبل النقر لترى العنوان الحقيقي.'},
+  {tag:'خصوصية', q:'كيف تقلل بصمتك السلبية؟', a:'احذف الكوكيز، عطّل تتبع الموقع، استخدم متصفح خصوصية، راجع أذونات التطبيقات.', ex:'إعدادات > الخصوصية > إيقاف "تتبع النشاط عبر التطبيقات".', icon:'fa-eye-slash', hint:'راجع تطبيقاً واحداً اليوم واحذف الأذونات غير الضرورية.'},
+  {tag:'2FA', q:'لماذا التحقق بخطوتين مهم؟', a:'حتى لو سُربت كلمتك، يحتاج المهاجم رمز هاتفك — يمنع 99% من الاختراقات.', ex:'فعّله في جوجل/أبل/انستقرام عبر تطبيق Authenticator.', icon:'fa-mobile-screen', hint:'لا ترسل كود OTP لأي شخص — حتى لو ادعى أنه دعم فني.'},
+  {tag:'سلوك', q:'ماذا تفعل قبل نشر صورة جماعية؟', a:'استأذن الجميع، تجنب بيانات (موقع، لوحة سيارة)، فكّر بأثرها بعد 10 سنوات.', ex:'التقط صورة بلا خلفية تكشف عنوان منزلك.', icon:'fa-camera', hint:'قاعدة: لو شككت 1% لا تنشر.'},
+  {tag:'شبكات', q:'هل تستخدم واي-فاي المدرسة للمعاملات البنكية؟', a:'لا — الشبكات العامة غير آمنة. استخدم بيانات جوالك أو VPN موثوق.', ex:'في المقهى: افتح VPN ثم ادخل للبنك.', icon:'fa-wifi', hint:'رمز القفل 🔒 في المتصفح لا يعني أن الشبكة آمنة 100%.'},
+  {tag:'حقوق', q:'ما حقك لو نُشرت عنك معلومة كاذبة؟', a:'الإبلاغ للمنصة، طلب الحذف، توثيق الأدلة، وإبلاغ الجهات المختصة عند التشهير.', ex:'استخدم "الإبلاغ" + احتفظ بلقطة شاشة بالتاريخ.', icon:'fa-scale-balanced', hint:'الرد الهادئ + الأدلة أقوى من الشجار العلني.'},
+  {tag:'نسخ', q:'لماذا النسخ الاحتياطي مهم؟', a:'يحميك من الفدية والحذف الخطأ — 3 نسخ: جهاز + سحابة + خارجي.', ex:'فعّل Google Drive/ iCloud للنسخ التلقائي الأسبوعي.', icon:'fa-cloud-arrow-up', hint:'جرّب استعادة نسخة للتأكد أنها تعمل.'},
+  {tag:'سؤال ذهبي', q:'كيف تجعل بصمتك إيجابية للجامعة/العمل؟', a:'انشر إنجازات، مشاريع، تطوع، والتزم بلغة محترمة — بصمتك سيرتك.', ex:'أنشئ ملف أعمال بسيط على لينكدإن/ Behance.', icon:'fa-star', hint:'ابحث عن اسمك في جوجل — ماذا يرى الآخرون؟'},
+  {tag:'تحدي', q:'ماذا تفعل إذا ضغطت رابط تصيد بالخطأ؟', a:'اقطع الإنترنت، غيّر كلمات السر، فعّل 2FA، افحص الجهاز بمضاد فيروسات، أبلغ.', ex:'لا تتجاهل — كل دقيقة تزيد الخطر.', icon:'fa-triangle-exclamation', hint:'سجّل الخطوات في ورقة والتصقها بجانب جهازك.'},
+];
+
+const scenarios=[
+  {title:'رسالة "تحديث درجاتك"', desc:'تصلك رسالة واتساب: "عاجل من مشكاة المنار — حدّث بياناتك لتظهر درجاتك" مع رابط غريب. زميلك يقول اضغط بسرعة!', options:[
+    {t:'أضغط فوراً — قد أخسر درجاتي', good:false, feedback:'خطر! هذه حيلة تصيد كلاسيكية — العجلة تُوقعك. المدرسة لا تطلب بياناتك عبر واتساب بروابط مختصرة.', impact:-20},
+    {t:'أتحقق من المرسل وأتواصل مع الإدارة عبر القناة الرسمية', good:true, feedback:'ممتاز! تحققت عبر قناة ثانية وتجنبت تسريب بياناتك. بصمتك بقيت نظيفة.', impact:+25},
+    {t:'أرسل الرابط لزملائي ليستفيدوا', good:false, feedback:'نشرت الخطر! لو كان تصيداً، وسّعت دائرة الضحايا وبصمتك أصبحت سلبية.', impact:-15},
+  ], tag:'تصيد', icon:'fa-envelope-open-text'},
+  {title:'تحدي رقص يكشف موقعك', desc:'ترند تيكتوك يطلب تصوير تحدي في غرفتك مع إظهار الشهادات على الحائط (بها اسمك الكامل ومدرستك). المتابعون يزدادون بسرعة.', options:[
+    {t:'أشارك كما هو — الشهرة أهم', good:false, feedback:'كشفت بيانات حساسة (اسم، مدرسة، موقع). هذه بصمة نشطة سلبية قد تُستغل للتنمر أو الانتحال.', impact:-20},
+    {t:'أصوّر بزاوية آمنة بلا بيانات وأراجع الخصوصية', good:true, feedback:'رائع! استمتعت بالترند وحميت خصوصيتك — بصمة إيجابية وآمنة.', impact:+20},
+    {t:'أحذف حسابي نهائياً', good:false, feedback:'حل متطرف — يمكنك الموازنة بين الاستمتاع والخصوصية دون انسحاب كامل.', impact:0},
+  ], tag:'بصمة', icon:'fa-video'},
+  {title:'زميل يطلب كلمة سر المنصة', desc:'زميلك نسي كلمة سر منصة مدرستي ويطلب حسابك "لدقيقة فقط" ليحمل واجباً. يقول: نحن أصدقاء!', options:[
+    {t:'أعطيه الحساب — ثقة أصدقاء', good:false, feedback:'مشاركة الحساب تنتهك السرية (CIA) وقد تُنسب إليك أفعاله — بصمتك = مسؤوليتك.', impact:-25},
+    {t:'أرفض بلطف وأساعده بطريقة رسمية', good:true, feedback:'مثالي! حافظت على السرية وساعدته عبر الاستعادة الرسمية أو المعلم.', impact:+25},
+    {t:'أعطيه كلمة سر قديمة', good:false, feedback:'لا تزال مشاركة بيانات دخول — الخطر نفسه، وكلماتك القديمة قد تُستخدم لاختراق حسابات أخرى.', impact:-10},
+  ], tag:'أخلاق رقمية', icon:'fa-handshake'},
+];
+
+const quizQuestions=[
+  {q:'البصمة الرقمية السلبية هي:', opts:['ما تنشره بإرادتك','ما يُجمع تلقائياً دون علمك مثل IP والكوكيز','تعليقاتك فقط','صورك فقط'], ans:1, exp:'السلبية تُجمع في الخلفية عبر التتبع والكوكيز.'},
+  {q:'أي كلمة سر أقوى؟', opts:['12345678','Mishkat2025','M$k_9aL!2025_Secure','ahmed1999'], ans:2, exp:'طويلة + متنوعة + رموز + غير شخصية.'},
+  {q:'ماذا يعني CIA في الأمن السيبراني؟', opts:['وكالة الاستخبارات','السرية والسلامة والتوافر','تشفير - إنترنت - أمان','لا شيء مما سبق'], ans:1, exp:'الركائز الثلاث لحماية المعلومات.'},
+  {q:'تصلك رسالة "اربح آيفون مجاناً اضغط هنا" — الأفضل:', opts:['الضغط فوراً','التحقق من المرسل وعدم إدخال بياناتك','إعادة إرسالها للجميع','حذفها فقط دون إبلاغ'], ans:1, exp:'تحقق ثم أبلغ — لا تدخل بياناتك.'},
+  {q:'التحقق بخطوتين (2FA) يفيد لأنه:', opts:['يجعل كلمتك أقصر','يضيف طبقة ثانية حتى لو سُربت كلمتك','يمنع الإنترنت','يخفي بصمتك تماماً'], ans:1, exp:'يمنع 99% من الاختراقات حتى مع تسريب كلمة السر.'},
+  {q:'أفضل إجراء لتقليل البصمة السلبية:', opts:['نشر المزيد','تعطيل تتبع الموقع وحذف الكوكيز دورياً','استخدام نفس كلمة السر','فتح كل الروابط'], ans:1, exp:'قلل التتبع وراجع الأذونات.'},
+  {q:'استخدام واي-فاي مقهى للمعاملات البنكية:', opts:['آمن تماماً','غير آمن — استخدم VPN أو بيانات الجوال','آمن إذا كان المتصفح به قفل','آمن ليلاً فقط'], ans:1, exp:'الشبكات العامة قد تُستغل للتجسس.'},
+  {q:'ماذا تفعل إذا ضغطت رابط تصيد؟', opts:['تتجاهل','تقطع الإنترنت وتغيّر كلمات السر وتفحص الجهاز','تنشره لأصدقائك','تعيد تشغيل الجهاز فقط'], ans:1, exp:'استجابة سريعة تقلل الضرر.'},
+  {q:'مشاركة حسابك المدرسي مع صديق:', opts:['مسموحة دائماً','مخالفة لمبدأ السرية وتعرضك للمساءلة','مسموحة إذا وثقت به','مسموحة لدقيقة'], ans:1, exp:'حسابك = بصمتك ومسؤوليتك.'},
+  {q:'أي سلوك يجعل بصمتك إيجابية؟', opts:['نشر شائعات','نشر مشاريعك وتطوعك بلغة محترمة','السخرية من الآخرين','نسخ أعمال الغير'], ans:1, exp:'بصمتك سيرتك المهنية.'},
+  {q:'برامج الفدية تنتشر غالباً عبر:', opts:['تحديث النظام','مرفقات ورسائل مشبوهة','كلمات سر قوية','VPN'], ans:1, exp:'لا تفتح مرفقات مجهولة.'},
+  {q:'قبل نشر صورة جماعية يجب:', opts:['النشر فوراً','استئذان الجميع وإخفاء البيانات الحساسة','إضافة الموقع الدقيق','وضع كل الأسماء'], ans:1, exp:'احترام الخصوصية والبصمة للجميع.'},
+];
+
+// ---------- Init ----------
+function init(){
+  renderThreats(); renderChecklist(); renderCards(); renderScenarios(); renderQuizBoard(); renderTeacherAnswers();
+  updatePoints(); updateProgress(); updateCertDate();
+  // tabs
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.addEventListener('click',()=>switchTab(b.dataset.tab));
+  });
+}
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    const active=b.dataset.tab===id;
+    b.className= active ? 'tab-btn active whitespace-nowrap flex-1 bg-white text-slate-900 px-4 py-2.5 rounded-full font-black text-sm flex items-center justify-center gap-2' : 'tab-btn whitespace-nowrap flex-1 text-white/80 hover:text-white px-4 py-2.5 rounded-full font-bold text-sm flex items-center justify-center gap-2';
+  });
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.add('hidden'));
+  document.getElementById('tab-'+id).classList.remove('hidden');
+  window.scrollTo({top:320, behavior:'smooth'});
+}
+function scrollToTabs(id){ switchTab(id); }
+
+function renderThreats(){
+  const c=document.getElementById('threats');
+  c.innerHTML=threatsData.map((t,i)=>`
+    <div class="bg-white/5 border border-white/10 rounded-2xl">
+      <button onclick="toggleThreat(${i})" class="w-full flex items-center justify-between p-3 text-right">
+        <span class="flex items-center gap-3"><span class="w-8 h-8 ${t.color} text-white rounded-full grid place-items-center text-sm"><i class="fa-solid ${t.icon}"></i></span><span class="font-bold text-sm">${t.title}</span></span>
+        <i id="threatIcon${i}" class="fa-solid fa-chevron-down text-white/50 text-xs"></i>
+      </button>
+      <div id="threatBody${i}" class="hidden px-3 pb-3">
+        <p class="text-xs leading-6 text-white/70">${t.desc}</p>
+        <div class="mt-2 bg-lime-400 text-slate-900 rounded-xl p-2.5 text-xs font-bold leading-6"><i class="fa-solid fa-shield-halved ml-1"></i> الحماية: ${t.protect}</div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleThreat(i){
+  const b=document.getElementById('threatBody'+i), ic=document.getElementById('threatIcon'+i);
+  const open=b.classList.contains('hidden');
+  b.classList.toggle('hidden'); ic.className= open ? 'fa-solid fa-chevron-up text-white/50 text-xs' : 'fa-solid fa-chevron-down text-white/50 text-xs';
+}
+
+function renderChecklist(){
+  const c=document.getElementById('checklist');
+  c.innerHTML=checklistItems.map((t,i)=>`
+    <label class="flex items-center gap-3 bg-white/10 border border-white/10 rounded-full px-3 py-2 cursor-pointer hover:bg-white/15">
+      <input type="checkbox" ${checklistState[i]?'checked':''} onchange="toggleCheck(${i}, this.checked)" class="w-4 h-4 accent-lime-400">
+      <span class="text-sm font-medium flex-1">${t}</span>
+      <i class="fa-solid fa-check text-lime-400 text-xs ${checklistState[i]?'':'opacity-20'}"></i>
+    </label>
+  `).join('');
+  updateCheckScore();
+}
+function toggleCheck(i,val){ checklistState[i]=val; localStorage.setItem('mishkat_check', JSON.stringify(checklistState)); renderChecklist(); addPoints(val?10:-10); updateProgress(); toast(val?'أحسنت! +10 نقاط':'تم الإلغاء'); }
+function updateCheckScore(){ const s=checklistState.filter(Boolean).length; document.getElementById('checkScore').textContent=s+'/6'; }
+
+function testPassword(){
+  const v=document.getElementById('passInput').value.trim();
+  let score=0, msg='';
+  if(v.length>=12) score+=30; else if(v.length>=8) score+=15;
+  if(/[A-Z]/.test(v) && /[a-z]/.test(v)) score+=20;
+  if(/[0-9]/.test(v)) score+=20;
+  if(/[^A-Za-z0-9]/.test(v)) score+=20;
+  if(/password|123456|qwerty/i.test(v)) score-=30;
+  score=Math.max(0,Math.min(100,score));
+  const bar=document.getElementById('passBar'), hint=document.getElementById('passHint');
+  bar.style.width=score+'%';
+  if(score<30){bar.className='h-full bg-red-500 transition-all'; msg='ضعيفة جداً — أضف رموز وأرقام وطوّلها.'}
+  else if(score<60){bar.className='h-full bg-amber-500 transition-all'; msg='متوسطة — أضف تنوعاً وطولاً.'}
+  else if(score<85){bar.className='h-full bg-cyan-500 transition-all'; msg='جيدة — ممتازة لو أضفت 2FA.'}
+  else {bar.className='h-full bg-lime-500 transition-all'; msg='قوية جداً — احتفظ بها في مدير كلمات سر.'}
+  hint.textContent=msg;
+  if(score>=70) addPoints(15);
+}
+
+// Cards logic
+function renderCards(){
+  updateCardUI(); renderDots();
+}
+function updateCardUI(){
+  const c=cards[currentCard];
+  document.getElementById('cardTag').textContent=c.tag + ' • ' + (currentCard+1) + '/12';
+  document.getElementById('cardQ').textContent=c.q;
+  document.getElementById('cardA').textContent=c.a;
+  document.getElementById('cardExample').textContent=c.ex;
+  document.getElementById('cardIcon').className='fa-solid '+c.icon;
+  document.getElementById('hintText').textContent=c.hint;
+  document.getElementById('cardCounter').textContent=(currentCard+1)+' / 12';
+  document.getElementById('knownCount').textContent=knownSet.size;
+  document.getElementById('unknownCount').textContent=unknownSet.size;
+  document.getElementById('flashcard').classList.remove('flipped');
+  renderDots();
+  updateProgress();
+}
+function renderDots(){
+  const d=document.getElementById('cardDots');
+  d.innerHTML=cards.map((_,i)=>{
+    let cls='bg-white/15 border border-white/10 text-white/60';
+    if(knownSet.has(i)) cls='bg-lime-400 text-slate-900 border-lime-400';
+    else if(unknownSet.has(i)) cls='bg-amber-400 text-slate-900 border-amber-400';
+    if(i===currentCard) cls+=' ring-2 ring-cyan-400 ring-offset-2 ring-offset-[#0f172a]';
+    return `<button onclick="goCard(${i})" class="w-8 h-8 rounded-full grid place-items-center text-xs font-black ${cls}">${i+1}</button>`;
+  }).join('');
+}
+function flipCard(){ document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard(){ currentCard=(currentCard+1)%cards.length; updateCardUI(); }
+function prevCard(){ currentCard=(currentCard-1+cards.length)%cards.length; updateCardUI(); }
+function goCard(i){ currentCard=i; updateCardUI(); }
+function shuffleCards(){ for(let i=cards.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [cards[i],cards[j]]=[cards[j],cards[i]] } currentCard=0; updateCardUI(); toast('تم الخلط — تحدٍ جديد!'); }
+function resetCards(){ knownSet.clear(); unknownSet.clear(); persistCards(); updateCardUI(); toast('تمت إعادة البطاقات'); }
+function markCard(known){
+  if(known){ knownSet.add(currentCard); unknownSet.delete(currentCard); addPoints(20); toast('رائع! +20 نقطة'); }
+  else { unknownSet.add(currentCard); knownSet.delete(currentCard); addPoints(5); toast('سجلناها للمراجعة +5'); }
+  persistCards(); nextCard();
+}
+function persistCards(){ localStorage.setItem('mishkat_known', JSON.stringify([...knownSet])); localStorage.setItem('mishkat_unknown', JSON.stringify([...unknownSet])); }
+function showHint(){ toast(document.getElementById('hintText').textContent); }
+
+// Scenarios
+let activeScenario=0;
+function renderScenarios(){
+  const g=document.getElementById('scenarioGrid');
+  g.innerHTML=scenarios.map((s,i)=>`
+    <div class="bg-white rounded-[20px] p-5 text-slate-900 flex flex-col">
+      <div class="flex items-center justify-between"><span class="bg-slate-900 text-white text-xs font-black px-3 py-1 rounded-full">${s.tag}</span><span class="w-9 h-9 bg-cyan-500 text-white rounded-full grid place-items-center"><i class="fa-solid ${s.icon}"></i></span></div>
+      <h4 class="font-black mt-3 leading-6">${s.title}</h4>
+      <p class="text-xs leading-6 text-slate-600 mt-2 line-clamp-3">${s.desc}</p>
+      <button onclick="openScenario(${i})" class="mt-4 bg-slate-900 text-white py-2.5 rounded-full font-black text-sm">اتخذ قرارك <i class="fa-solid fa-arrow-left mr-1"></i></button>
+    </div>
+  `).join('');
+}
+function openScenario(i){ activeScenario=i; const s=scenarios[i]; document.getElementById('scTag').textContent='سيناريو '+(i+1)+' • '+s.tag; document.getElementById('scTitle').textContent=s.title; document.getElementById('scDesc').textContent=s.desc;
+  document.getElementById('scOptions').innerHTML=s.options.map((o,idx)=>`<button onclick="chooseOption(${idx})" class="w-full text-right bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl p-3 flex items-center justify-between"><span class="text-sm font-bold">${o.t}</span><i class="fa-solid fa-chevron-left text-xs text-slate-400"></i></button>`).join('');
+  document.getElementById('scResult').className='hidden mt-4 rounded-2xl p-4 border'; document.getElementById('scResult').innerHTML='';
+  document.getElementById('scenarioModal').classList.remove('hidden');
+}
+function closeScenario(){ document.getElementById('scenarioModal').classList.add('hidden'); }
+function chooseOption(idx){
+  const s=scenarios[activeScenario], o=s.options[idx];
+  const r=document.getElementById('scResult');
+  r.className='mt-4 rounded-2xl p-4 border ' + (o.good ? 'bg-lime-50 border-lime-200 text-lime-900' : 'bg-red-50 border-red-200 text-red-800');
+  r.innerHTML=`<p class="font-black text-sm">${o.good ? '<i class="fa-solid fa-circle-check ml-1"></i> قرار صائب' : '<i class="fa-solid fa-triangle-exclamation ml-1"></i> قرار خطر'}</p><p class="text-xs leading-6 mt-1">${o.feedback}</p><p class="text-xs font-black mt-2">أثر البصمة: ${o.impact>0?'+':''}${o.impact} نقطة</p>`;
+  r.classList.remove('hidden');
+  addPoints(o.impact); updateProgress();
+}
+function nextScenario(){ activeScenario=(activeScenario+1)%scenarios.length; openScenario(activeScenario); }
+
+// Quiz
+function startQuiz(){
+  quizStarted=true; quizIndex=0; quizAnswers={}; timeLeft=300; document.getElementById('startQuizBtn').textContent='جاري...';
+  renderQuizQuestion(); startTimer(); updateQuizBoard();
+}
+function startTimer(){
+  clearInterval(timerInt);
+  timerInt=setInterval(()=>{
+    timeLeft--; const m=String(Math.floor(timeLeft/60)).padStart(2,'0'), s=String(timeLeft%60).padStart(2,'0');
+    document.getElementById('quizTimer').textContent=m+':'+s;
+    if(timeLeft<=0){ clearInterval(timerInt); finishQuiz(); }
+  },1000);
+}
+function renderQuizQuestion(){
+  const q=quizQuestions[quizIndex];
+  document.getElementById('quizProgress').textContent=`سؤال ${quizIndex+1} من ${quizQuestions.length}`;
+  document.getElementById('quizBar').style.width=((quizIndex+1)/quizQuestions.length*100)+'%';
+  document.getElementById('quizScoreMini').textContent='النقاط: '+getQuizScore();
+  const chosen=quizAnswers[quizIndex];
+  document.getElementById('quizBox').innerHTML=`
+    <h4 class="font-black text-[15px] leading-6">${q.q}</h4>
+    <div class="mt-4 space-y-2">
+      ${q.opts.map((o,i)=>`
+        <button onclick="answerQuiz(${i})" class="w-full text-right p-3 rounded-2xl border-2 flex items-center justify-between ${chosen===i ? (i===q.ans ? 'bg-lime-50 border-lime-400 text-slate-900' : 'bg-red-50 border-red-400 text-slate-900') : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-900'}">
+          <span class="text-sm font-bold">${o}</span>
+          <span class="w-7 h-7 rounded-full grid place-items-center text-xs ${chosen===i ? (i===q.ans ? 'bg-lime-500 text-white' : 'bg-red-500 text-white') : 'bg-white border'}">${chosen===i ? (i===q.ans ? '<i class="fa-solid fa-check"></i>' : '<i class="fa-solid fa-xmark"></i>') : String.fromCharCode(65+i)}</span>
+        </button>
+      `).join('')}
+    </div>
+    ${chosen!==undefined ? `<div class="mt-4 ${chosen===q.ans ? 'bg-lime-50 border-lime-200 text-lime-900' : 'bg-amber-50 border-amber-200 text-amber-900'} border rounded-2xl p-3 text-xs leading-6"><b>${chosen===q.ans ? 'إجابة صحيحة!' : 'تلميح:'}</b> ${q.exp}</div>` : `<p class="text-xs text-slate-500 mt-3">اختر إجابة لترى الشرح فوراً</p>`}
+  `;
+  updateQuizBoard();
+}
+function answerQuiz(i){
+  if(quizAnswers[quizIndex]!==undefined) return;
+  quizAnswers[quizIndex]=i; localStorage.setItem('mishkat_quizAns', JSON.stringify(quizAnswers));
+  if(i===quizQuestions[quizIndex].ans) addPoints(15); else addPoints(3);
+  renderQuizQuestion(); updateProgress();
+}
+function nextQuiz(){ if(quizIndex < quizQuestions.length-1){ quizIndex++; renderQuizQuestion(); } else finishQuiz(); }
+function prevQuiz(){ if(quizIndex>0){ quizIndex--; renderQuizQuestion(); } }
+function getQuizScore(){
+  let c=0; Object.entries(quizAnswers).forEach(([k,v])=>{ if(v===quizQuestions[k].ans) c++; });
+  return c*15 + (Object.keys(quizAnswers).length - c)*3; // points
+}
+function getQuizPercent(){
+  let correct=0; Object.entries(quizAnswers).forEach(([k,v])=>{ if(v===quizQuestions[k].ans) correct++; });
+  return Math.round(correct/quizQuestions.length*100);
+}
+function finishQuiz(){
+  clearInterval(timerInt);
+  const percent=getQuizPercent();
+  document.getElementById('quizBox').innerHTML=`
+    <div class="text-center py-6">
+      <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-2xl grid place-items-center mx-auto text-2xl"><i class="fa-solid fa-trophy"></i></div>
+      <h4 class="font-black text-xl mt-3">انتهيت! نتيجتك ${percent}%</h4>
+      <p class="text-sm text-slate-600 mt-1">أجبت على ${Object.keys(quizAnswers).length} من ${quizQuestions.length} — ${percent>=70 ? 'مستوى حارس رقمي!' : 'راجع البطاقات وحاول مجدداً'}</p>
+      <div class="mt-4 flex gap-2 justify-center">
+        <button onclick="resetQuiz()" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-black">إعادة الاختبار</button>
+        <button onclick="switchTab('board')" class="bg-cyan-500 text-white px-5 py-2.5 rounded-full text-sm font-black">عرض الشهادة</button>
+      </div>
+    </div>
+  `;
+  updateProgress(); toast('انتهى الاختبار — ' + percent + '%');
+}
+function resetQuiz(){ quizAnswers={}; localStorage.removeItem('mishkat_quizAns'); quizIndex=0; timeLeft=300; document.getElementById('quizTimer').textContent='05:00'; document.getElementById('startQuizBtn').textContent='ابدأ الآن'; document.getElementById('quizBox').innerHTML='<p class="text-slate-400 text-sm text-center py-10">اضغط "ابدأ الآن" لبدء التحدي</p>'; updateProgress(); updateQuizBoard(); }
+function renderQuizBoard(){ updateQuizBoard(); }
+function updateQuizBoard(){
+  const board=document.getElementById('liveBoard');
+  const percent=getQuizPercent(), answered=Object.keys(quizAnswers).length;
+  board.innerHTML=`
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-3 flex items-center justify-between"><span class="text-xs text-white/70">الأسئلة المجابة</span><span class="font-black text-cyan-400">${answered}/${quizQuestions.length}</span></div>
+    <div class="bg-white text-slate-900 rounded-2xl p-3 flex items-center justify-between"><span class="text-xs font-bold">الدقة</span><span class="font-black text-xl ${percent>=70?'text-lime-600':'text-amber-600'}">${percent}%</span></div>
+    <div class="flex gap-2 text-[11px] font-bold">
+      <span class="flex-1 bg-lime-400 text-slate-900 rounded-full py-2 text-center">صحيحة: ${Object.entries(quizAnswers).filter(([k,v])=>v===quizQuestions[k].ans).length}</span>
+      <span class="flex-1 bg-white/10 border border-white/10 text-white rounded-full py-2 text-center">خاطئة: ${Object.entries(quizAnswers).filter(([k,v])=>v!==quizQuestions[k].ans).length}</span>
+    </div>
+  `;
+}
+function renderTeacherAnswers(){
+  const c=document.getElementById('teacherAnswers');
+  c.innerHTML=quizQuestions.map((q,i)=>`<div class="flex gap-2"><span class="font-black">${i+1}.</span><span>${q.opts[q.ans]}</span></div>`).join('');
+}
+
+// Progress & points
+function addPoints(n){ points=Math.max(0, points+n); localStorage.setItem('mishkat_points', points); updatePoints(); updateProgress(); }
+function updatePoints(){
+  document.getElementById('pointsDisplay').textContent=points;
+  const mp=document.getElementById('mobilePoints'); if(mp) mp.textContent=points;
+  document.getElementById('statPoints').textContent=points;
+}
+function updateProgress(){
+  const cardProgress= Math.round(knownSet.size/12*100);
+  const quizPercent=getQuizPercent();
+  const checkProgress=Math.round(checklistState.filter(Boolean).length/6*100);
+  const total=Math.round((cardProgress*0.4 + quizPercent*0.4 + checkProgress*0.2));
+  document.getElementById('progressCircle').style.strokeDashoffset=81.68 - (81.68*total/100);
+  document.getElementById('progressText').textContent=total+'%';
+  const mp=document.getElementById('mobileProgress'); if(mp) mp.textContent=total+'%';
+  document.getElementById('totalPercent').textContent=total+'%';
+  document.getElementById('totalBar').style.width=total+'%';
+  document.getElementById('statCards').textContent=knownSet.size+'/12';
+  document.getElementById('statQuiz').textContent=quizPercent+'%';
+  document.getElementById('certScore').textContent=total+'%';
+  document.getElementById('certGrade').textContent= total>=90?'ممتاز' : total>=80?'جيد جداً' : total>=70?'جيد' : total>=50?'مقبول' : 'يحتاج تحسين';
+  if(total>=70) document.getElementById('certGrade').className='font-black text-lime-600';
+}
+function updateCertDate(){ document.getElementById('certDate').textContent=new Date().toLocaleDateString('ar-SA'); }
+
+// Helpers
+function copyLink(){
+  const link='https://mishkat-almanar-cyber-3th.netlify.app';
+  navigator.clipboard.writeText(link).then(()=>toast('تم نسخ الرابط: '+link));
+}
+function toast(msg){ const t=document.getElementById('toast'); document.getElementById('toastMsg').textContent=msg; t.classList.remove('hidden'); t.classList.add('flex'); setTimeout(()=>{t.classList.add('hidden'); t.classList.remove('flex')},2500); }
+function toggleMobileMenu(){ document.getElementById('mobileMenu').classList.toggle('hidden'); }
+function openTeacherMode(){ document.getElementById('teacherDialog').showModal(); }
+function revealAllAnswers(){ document.querySelectorAll('.card-back').forEach(el=>el.closest('.card-flip').classList.add('flipped')); toast('تم إظهار الإجابات للعرض'); }
+function hideAllAnswers(){ document.querySelectorAll('.card-flip').forEach(el=>el.classList.remove('flipped')); }
+function shareResult(){ const p=getQuizPercent(); copyLink(); toast('نتيجتي '+p+'% — شارك الرابط مع زملائك!'); }
+function printCert(){ window.print(); }
+function downloadCert(){ toast('استخدم طباعة → حفظ كـ PDF'); window.print(); }
+function downloadHTML(){ const blob=new Blob([document.documentElement.outerHTML], {type:'text/html'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mishkat-almanar-cyber-3th.html'; a.click(); toast('تم تحميل الملف — ارفعه الآن'); }
+function resetAll(){ if(confirm('هل تريد إعادة تعيين كل التقدم؟')){ localStorage.clear(); points=0; knownSet.clear(); unknownSet.clear(); checklistState=[false,false,false,false,false,false]; quizAnswers={}; updatePoints(); renderChecklist(); renderDots(); updateCardUI(); updateProgress(); resetQuiz(); toast('تمت إعادة التعيين'); } }
+function exportData(){ const data={points, known:[...knownSet], quizPercent:getQuizPercent(), check:checklistState, date:new Date().toISOString()}; const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mishkat-results.json'; a.click(); }
+
+init();
+</script>
+</body>
+</html>
